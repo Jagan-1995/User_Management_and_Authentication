@@ -14,9 +14,15 @@ public class WebConfig implements WebMvcConfigurer {
         this.rateLimitingConfig = rateLimitingConfig;
     }
 
+    /**
+     * Add interceptors to handle specific request logic before controllers are invoked.
+     * In this case, the RateLimitInterceptor is added for rate-limiting logic.
+     *
+     * @param registry The registry to add interceptors to.
+     */
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(new RateLimitInterceptor(rateLimitingConfig))
-                .addPathPatterns("/api/auth/login");
+        registry.addInterceptor(new RateLimitInterceptor(rateLimitingConfig)) // Add the rate-limiting interceptor
+                .addPathPatterns("/api/auth/login"); // Apply rate-limiting to the login endpoint
     }
 }

@@ -2,7 +2,6 @@ package dev.jagan.user_management.dtos;
 
 
 
-
 public class LoginResponse {
     private String token;
 

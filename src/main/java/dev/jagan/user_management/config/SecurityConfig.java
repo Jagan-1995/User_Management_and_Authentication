@@ -18,8 +18,8 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
-@EnableWebSecurity
-@EnableMethodSecurity
+@EnableWebSecurity // Enables Spring Security for the application
+@EnableMethodSecurity // Enables method-level security annotations (e.g., @PreAuthorize)
 public class SecurityConfig {
 
     private final JwtTokenProvider jwtTokenProvider;
@@ -31,6 +31,13 @@ public class SecurityConfig {
         this.jwtTokenProvider = jwtTokenProvider;
     }
 
+    /**
+     * Configure the security filter chain to define security rules and filters.
+     *
+     * @param http HttpSecurity object to configure security.
+     * @return A configured SecurityFilterChain bean.
+     * @throws Exception if there is an error in configuration.
+     */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(csrf -> csrf.disable()) // Disable CSRF for stateless APIs
@@ -45,16 +52,35 @@ public class SecurityConfig {
         return http.build();
     }
 
+    /**
+     * Expose the AuthenticationManager as a bean to handle authentication logic.
+     *
+     * @param configuration The AuthenticationConfiguration provided by Spring Security.
+     * @return The configured AuthenticationManager bean.
+     * @throws Exception if there is an error in creating the AuthenticationManager.
+     */
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
         return configuration.getAuthenticationManager();
     }
 
+    /**
+     * Define a bean for password encoding using BCrypt.
+     * This ensures passwords are hashed securely.
+     *
+     * @return A PasswordEncoder bean.
+     */
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
+    /**
+     * Create and expose the custom JWT authentication filter.
+     * This filter validates JWT tokens for incoming requests.
+     *
+     * @return A JwtAuthenticationFilter bean.
+     */
     @Bean
     public JwtAuthenticationFilter jwtAuthenticationFilter() {
         return new JwtAuthenticationFilter(jwtTokenProvider, userDetailsService);

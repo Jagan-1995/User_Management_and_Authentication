@@ -13,7 +13,8 @@ public class UserPrincipal implements UserDetails {
     private Long id;
     private String email;
     private String password;
-    private Collection<? extends GrantedAuthority> authorities;
+    private Collection<? extends GrantedAuthority> authorities; // The user's authorities (roles)
+
 
     public UserPrincipal(Long id, String email, String password, Collection<? extends GrantedAuthority> authorities) {
         this.id = id;
@@ -21,7 +22,7 @@ public class UserPrincipal implements UserDetails {
         this.password = password;
         this.authorities = authorities;
     }
-
+    // Static method to create a UserPrincipal from a User object
     public static UserPrincipal create(User user) {
         return new UserPrincipal(
                 user.getId(),

@@ -41,19 +41,22 @@ public class AuthController {
                         loginRequest.getPassword()
                 )
         );
-
+        // Set the authentication object in the security context
         SecurityContextHolder.getContext().setAuthentication(authentication);
+        // Generate a JWT token based on the authentication
         String jwt = tokenProvider.generateToken(authentication);
 
         userService.updateLastLoginDate(loginRequest.getEmail());
-
+        // Return the JWT token as part of the response
         return ResponseEntity.ok(new LoginResponse(jwt));
     }
 
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@Valid @RequestBody UserDto userDto) {
+        // Create a new user using the provided user details
         User user = userService.createUser(userDto);
+        // Return the created user as part of the response
         return ResponseEntity.ok(user);
     }
 }

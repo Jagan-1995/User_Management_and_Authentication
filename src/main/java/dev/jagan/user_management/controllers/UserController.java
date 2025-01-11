@@ -21,14 +21,15 @@ public class UserController {
         this.userService = userService;
     }
 
+    // Endpoint to retrieve all users (paginated)
     @GetMapping
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')") // Ensures only users with 'ADMIN' role can access this endpoint
     public ResponseEntity<Page<User>> getAllUsers(Pageable pageable) {
         return ResponseEntity.ok(userService.getAllUsers(pageable));
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN') or @userService.getCurrentUserId() == #id")
+    @PreAuthorize("hasRole('ADMIN') or @userService.getCurrentUserId() == #id") // Ensures either an 'ADMIN' or the user themselves can update their own details
     public ResponseEntity<User> updateUser(@PathVariable Long id, @Valid @RequestBody UserDto userDto) {
         return ResponseEntity.ok(userService.updateUser(id, userDto));
     }

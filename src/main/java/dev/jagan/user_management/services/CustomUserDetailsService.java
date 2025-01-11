@@ -17,20 +17,25 @@ public class CustomUserDetailsService implements UserDetailsService {
         this.userRepository = userRepository;
     }
 
+    // Method to load user details by username (email in this case)
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        // Fetch user from database using the provided email
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() ->
+                .orElseThrow(() ->  // If no user found, throw UsernameNotFoundException
                         new UsernameNotFoundException("User not found with email : " + email)
                 );
+        // Convert User entity to UserPrincipal (custom UserDetails implementation) and return it
         return UserPrincipal.create(user);
     }
-
+    // Method to load user details by user ID
     public UserDetails loadUserById(Long id) {
+        // Fetch user from database using the provided ID
         User user = userRepository.findById(id)
-                .orElseThrow(() ->
+                .orElseThrow(() ->  // If no user found, throw UsernameNotFoundException
                         new UsernameNotFoundException("User not found with id : " + id)
                 );
+        // Convert User entity to UserPrincipal (custom UserDetails implementation) and return it
         return UserPrincipal.create(user);
     }
 }
