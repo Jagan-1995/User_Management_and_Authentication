@@ -3,13 +3,17 @@ package dev.jagan.user_management.services;
 import dev.jagan.user_management.dtos.UserDto;
 import dev.jagan.user_management.models.User;
 import dev.jagan.user_management.repositories.UserRepository;
+import io.jsonwebtoken.security.Keys;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.crypto.SecretKey;
+import java.security.SecureRandom;
 import java.time.LocalDateTime;
+import java.util.Base64;
 
 @Service
 public class UserService {
@@ -23,9 +27,11 @@ public class UserService {
     }
 
     public User createUser(UserDto userDto) {
-        if (userRepository.existsByEmail(userDto.getEmail())) {
-            throw new IllegalArgumentException("Email already exists");
-        }
+
+        userRepository.findByEmail(userDto.getEmail())
+                .ifPresent(user -> {
+                    throw new IllegalArgumentException("Email already exists");
+                });
 
         User user = new User();
         user.setName(userDto.getName());
@@ -69,4 +75,7 @@ public class UserService {
         user.setLastLoginDate(LocalDateTime.now());
         userRepository.save(user);
     }
+
+
+
 }

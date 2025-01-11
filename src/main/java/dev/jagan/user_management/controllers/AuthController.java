@@ -50,6 +50,7 @@ public class AuthController {
         return ResponseEntity.ok(new LoginResponse(jwt));
     }
 
+
     @PostMapping("/register")
     public ResponseEntity<?> register(@Valid @RequestBody UserDto userDto) {
         User user = userService.createUser(userDto);

@@ -1,7 +1,8 @@
-package dev.jagan.user_management.security;
+package dev.jagan.user_management.services;
 
 import dev.jagan.user_management.models.User;
 import dev.jagan.user_management.repositories.UserRepository;
+import dev.jagan.user_management.security.UserPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

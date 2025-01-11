@@ -1,8 +1,8 @@
 package dev.jagan.user_management.config;
 
-import dev.jagan.user_management.security.CustomUserDetailsService;
 import dev.jagan.user_management.security.JwtAuthenticationFilter;
 import dev.jagan.user_management.security.JwtTokenProvider;
+import dev.jagan.user_management.services.CustomUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -11,6 +11,7 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -22,21 +23,23 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     private final JwtTokenProvider jwtTokenProvider;
+    private final CustomUserDetailsService userDetailsService;
 
-    public SecurityConfig(JwtTokenProvider jwtTokenProvider) {
+    public SecurityConfig(JwtTokenProvider jwtTokenProvider,
+                          CustomUserDetailsService userDetailsService) {
+        this.userDetailsService = userDetailsService;
         this.jwtTokenProvider = jwtTokenProvider;
     }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.csrf().disable() // Disable CSRF for stateless API
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS) // Stateless session management
-                .and()
-                .authorizeHttpRequests()
-                .requestMatchers("/api/auth/**").permitAll() // Public endpoints
-                .requestMatchers("/api/admin/**").hasRole("ADMIN") // Admin-specific access
-                .anyRequest().authenticated() // All other endpoints require authentication
-                .and()
+        http.csrf(csrf -> csrf.disable()) // Disable CSRF for stateless APIs
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // Stateless session management
+                .authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers("/api/auth/**", "/swagger-ui/**", "/api-docs/**").permitAll() // Public endpoints
+                        .requestMatchers("/api/admin/**").hasRole("ADMIN") // Admin-specific access
+                        .anyRequest().authenticated() // All other endpoints require authentication
+                )
                 .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class); // Add JWT filter
 
         return http.build();
@@ -54,6 +57,6 @@ public class SecurityConfig {
 
     @Bean
     public JwtAuthenticationFilter jwtAuthenticationFilter() {
-        return new JwtAuthenticationFilter(jwtTokenProvider);
+        return new JwtAuthenticationFilter(jwtTokenProvider, userDetailsService);
     }
 }
