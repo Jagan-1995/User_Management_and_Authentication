@@ -43,7 +43,7 @@ public class SecurityConfig {
         http.csrf(csrf -> csrf.disable()) // Disable CSRF for stateless APIs
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // Stateless session management
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/api/auth/**", "/swagger-ui/**", "/api-docs/**").permitAll() // Public endpoints
+                        .requestMatchers("/api/auth/**", "/swagger-ui/**", "/v3/api-docs/**").permitAll() // Public endpoints
                         .requestMatchers("/api/admin/**").hasRole("ADMIN") // Admin-specific access
                         .anyRequest().authenticated() // All other endpoints require authentication
                 )

@@ -10,6 +10,7 @@ services:
       SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/user_management
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: password
+#      JWT_Key_Secret: Zv7FL2421lpVMMpaw/TpwuqzjB/iqCUDV2U9jJSxAHZvDWx1OB8YzzPMrd4S1cUprFBYj/3IRAfmHUow3EUhtQ==
     depends_on:
       - db
 
@@ -17,7 +18,7 @@ services:
     image: mysql:8.0
     container_name: user_management_db
     ports:
-      - "3306:3306"
+      - "3307:3306"
     environment:
       MYSQL_ROOT_PASSWORD: password
       MYSQL_DATABASE: user_management

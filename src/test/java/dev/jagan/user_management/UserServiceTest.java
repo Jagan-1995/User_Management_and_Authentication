@@ -12,6 +12,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.util.Optional;
+
 import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -48,7 +50,7 @@ public class UserServiceTest {
     @Test
     void createUser_ValidInput_Success() {
         // Simulate that the email is not already taken and that the password will be encoded.
-        when(userRepository.existsByEmail(anyString())).thenReturn(false);
+
         when(passwordEncoder.encode(anyString())).thenReturn("encodedPassword");
         when(userRepository.save(any(User.class))).thenReturn(user);
         // Call the createUser method and check if the result is correct
@@ -63,13 +65,13 @@ public class UserServiceTest {
 
     @Test
     void createUser_DuplicateEmail_ThrowsException() {
-        // Simulate that the email is already taken.
-        when(userRepository.existsByEmail(anyString())).thenReturn(true);
-        // Assert that an IllegalArgumentException is thrown when trying to create the user.
-        assertThrows(IllegalArgumentException.class, () -> {
-            userService.createUser(userDto);
-        });
-        // Verify that the save method was never called when the email is duplicated.
+        // Mock the repository to return a user when findByEmail is called
+        when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(new User()));
+
+        // Assert that an IllegalArgumentException is thrown when creating a user with a duplicate email
+        assertThrows(IllegalArgumentException.class, () -> userService.createUser(userDto));
+
+        // Verify that save was never called
         verify(userRepository, never()).save(any(User.class));
     }
 }

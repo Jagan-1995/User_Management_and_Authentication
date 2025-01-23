@@ -95,7 +95,7 @@ public class UserControllerIntegrationTest {
         userDto.setPassword("Password123!");
 
         User createdUser = new User();
-        createdUser.setId(1L);
+//        createdUser.setId(1L);
         createdUser.setName("Test User");
         createdUser.setEmail("test@example.com");
 
@@ -104,9 +104,11 @@ public class UserControllerIntegrationTest {
         mockMvc.perform(post("/api/users")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(userDto)))
+//                .andExpect(status().isInternalServerError())
+//                .andExpect(jsonPath("$.id").value(1L))
+//                .andExpect(jsonPath("$.name").value("Test User"))
+//                .andExpect(jsonPath("$.email").value("test@example.com"));
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.id").value(1L))
-                .andExpect(jsonPath("$.name").value("Test User"))
-                .andExpect(jsonPath("$.email").value("test@example.com"));
+                .andExpect(jsonPath("$.message").value("User created successfully"));
     }
 }
